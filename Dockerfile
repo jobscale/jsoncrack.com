@@ -1,5 +1,5 @@
 # Builder
-FROM node:22-alpine as builder
+FROM node:22-alpine AS builder
 # Reference :: https://pnpm.io/docker
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
