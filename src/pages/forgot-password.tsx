@@ -99,6 +99,7 @@ const ForgotPassword = () => {
     <Layout>
       <Head>
         <title>Reset Password - JSON Crack</title>
+        <link rel="canonical" href="https://app.jsoncrack.com/forgot-password" />
         <meta name="robots" content="noindex,nofollow" />
       </Head>
       {isPasswordReset ? (
@@ -133,7 +134,7 @@ const ForgotPassword = () => {
                   </Button>
                 </Group>
                 <Stack mt="lg" align="center">
-                  <Anchor component={Link} prefetch={false} href="/sign-in" c="dark" size="xs">
+                  <Anchor component={Link} href="/sign-in" c="dark" size="xs">
                     Don&apos;t have an account? Sign Up
                   </Anchor>
                 </Stack>

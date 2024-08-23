@@ -1,30 +1,61 @@
 import React from "react";
 import type { AppProps } from "next/app";
-import dynamic from "next/dynamic";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { MantineProvider, createTheme } from "@mantine/core";
+import { createTheme, MantineProvider } from "@mantine/core";
 import "@mantine/core/styles.css";
 import "@mantine/code-highlight/styles.css";
 import { ThemeProvider } from "styled-components";
 import ReactGA from "react-ga4";
+import { Toaster } from "react-hot-toast";
 import GlobalStyle from "src/constants/globalStyle";
 import { lightTheme } from "src/constants/theme";
 import { supabase } from "src/lib/api/supabase";
 import useUser from "src/store/useUser";
 
-const Toaster = dynamic(() => import("react-hot-toast").then(c => c.Toaster));
-
-const mantineTheme = createTheme({
+const theme = createTheme({
+  autoContrast: true,
+  fontSmoothing: false,
+  respectReducedMotion: true,
+  cursorType: "pointer",
+  fontFamily:
+    'system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji"',
+  defaultGradient: {
+    from: "#388cdb",
+    to: "#0f037f",
+    deg: 180,
+  },
   primaryShade: 8,
+  colors: {
+    brightBlue: [
+      "#e6f2ff",
+      "#cee1ff",
+      "#9bc0ff",
+      "#649dff",
+      "#3980fe",
+      "#1d6dfe",
+      "#0964ff",
+      "#0054e4",
+      "#004acc",
+      "#003fb5",
+    ],
+  },
+  radius: {
+    lg: "12px",
+  },
+  components: {
+    Button: {
+      defaultProps: {
+        fw: 500,
+      },
+    },
+  },
 });
 
 const isDevelopment = process.env.NODE_ENV === "development";
-const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_ID;
+const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_ID as string;
 
 ReactGA.initialize(GA_TRACKING_ID, { testMode: isDevelopment });
-
-const ExternalMode = dynamic(() => import("src/layout/ExternalMode"));
 
 function JsonCrack({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -51,10 +82,9 @@ function JsonCrack({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>JSON Crack | More Than a JSON Editor</title>
+        <title>JSON Crack | Transform your data into interactive graphs</title>
       </Head>
-
-      <MantineProvider theme={mantineTheme}>
+      <MantineProvider defaultColorScheme="light" theme={theme}>
         <ThemeProvider theme={lightTheme}>
           <Toaster
             position="bottom-right"
@@ -73,7 +103,6 @@ function JsonCrack({ Component, pageProps }: AppProps) {
           />
           <GlobalStyle />
           <Component {...pageProps} />
-          <ExternalMode />
         </ThemeProvider>
       </MantineProvider>
     </>

@@ -2,11 +2,11 @@ import React from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import type { PaperProps } from "@mantine/core";
 import {
   TextInput,
   PasswordInput,
   Paper,
-  PaperProps,
   Button,
   Divider,
   Anchor,
@@ -106,7 +106,7 @@ export function AuthenticationForm(props: PaperProps) {
           </Button>
 
           <Stack gap="sm" mx="auto" align="center">
-            <Anchor component={Link} prefetch={false} href="/forgot-password" c="dark" size="xs">
+            <Anchor component={Link} href="/forgot-password" c="dark" size="xs">
               Forgot your password?
             </Anchor>
           </Stack>
@@ -142,23 +142,44 @@ export function AuthenticationForm(props: PaperProps) {
 const SignIn = () => {
   const { isReady, push, query } = useRouter();
   const hasSession = useUser(state => !!state.user);
+  const setSession = useUser(state => state.setSession);
   const isPasswordReset = query?.type === "recovery" && !query?.error;
 
   React.useEffect(() => {
-    if (isIframe()) push("/");
-    if (isReady && hasSession && !isPasswordReset) push("/editor");
-  }, [isReady, hasSession, push, isPasswordReset]);
+    if (isIframe()) {
+      push("/");
+      return;
+    }
+
+    if (!isReady) return;
+
+    if (query?.access_token && query?.refresh_token) {
+      (async () => {
+        const refresh_token = query.refresh_token as string;
+        const access_token = query.access_token as string;
+        const { data, error } = await supabase.auth.setSession({ refresh_token, access_token });
+
+        if (error) return toast.error(error.message);
+        if (data.session) setSession(data.session);
+      })();
+    }
+
+    if (hasSession && !isPasswordReset) push("/editor");
+  }, [isReady, hasSession, push, isPasswordReset, query, setSession]);
+
+  if (!isReady) return null;
 
   return (
     <Layout>
       <Head>
         <title>Sign In - JSON Crack</title>
+        <link rel="canonical" href="https://app.jsoncrack.com/sign-in" />
       </Head>
       <Paper mt={100} mx="auto" maw={400} p="lg" withBorder>
         <AuthenticationForm />
       </Paper>
       <Center my="xl">
-        <Anchor component={Link} prefetch={false} href="/sign-up" c="gray.5" fw="bold">
+        <Anchor component={Link} href="/sign-up" c="gray.5" fw="bold">
           Don&apos;t have an account?
         </Anchor>
       </Center>

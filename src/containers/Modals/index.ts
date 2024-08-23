@@ -6,16 +6,15 @@ export { AccountModal } from "./AccountModal";
 export { NodeModal } from "./NodeModal";
 export { ShareModal } from "./ShareModal";
 export { LoginModal } from "./LoginModal";
-export { PremiumModal } from "./PremiumModal";
+export { UpgradeModal } from "./UpgradeModal";
 export { JWTModal } from "./JWTModal";
 export { SchemaModal } from "./SchemaModal";
-export { CancelPremiumModal } from "./CancelPremiumModal";
 export { ReviewModal } from "./ReviewModal";
 export { JQModal } from "./JQModal";
 export { TypeModal } from "./TypeModal";
+export { JPathModal } from "./JPathModal";
 
 type Modal =
-  | "clear"
   | "cloud"
   | "download"
   | "import"
@@ -23,12 +22,12 @@ type Modal =
   | "node"
   | "share"
   | "login"
-  | "premium"
+  | "upgrade"
   | "jwt"
   | "schema"
-  | "cancelPremium"
   | "review"
   | "jq"
-  | "type";
+  | "type"
+  | "jpath";
 
 export type { Modal };

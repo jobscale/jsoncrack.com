@@ -58,6 +58,7 @@ const SignUp = () => {
     <Layout>
       <Head>
         <title>Sign Up - JSON Crack</title>
+        <link rel="canonical" href="https://app.jsoncrack.com/sign-up" />
       </Head>
       {done ? (
         <Paper mx="auto" maw={400} mt={100} p="lg" withBorder>
@@ -143,11 +144,25 @@ const SignUp = () => {
 
                 <Text fz="xs" c="gray">
                   By signing up, you agree to our{" "}
-                  <Anchor fz="xs" component={Link} href="/legal/terms" c="gray" fw={500}>
+                  <Anchor
+                    fz="xs"
+                    component={Link}
+                    prefetch={false}
+                    href="/legal/terms"
+                    c="gray"
+                    fw={500}
+                  >
                     Terms of Service
                   </Anchor>{" "}
                   and{" "}
-                  <Anchor fz="xs" component={Link} href="/legal/privacy" c="gray" fw={500}>
+                  <Anchor
+                    fz="xs"
+                    component={Link}
+                    prefetch={false}
+                    href="/legal/privacy"
+                    c="gray"
+                    fw={500}
+                  >
                     Privacy Policy
                   </Anchor>
                   . Need help?{" "}
@@ -166,7 +181,7 @@ const SignUp = () => {
           </Paper>
 
           <Center my="xl">
-            <Anchor component={Link} prefetch={false} href="/sign-in" c="gray.5" fw="bold">
+            <Anchor component={Link} href="/sign-in" c="gray.5" fw="bold">
               Already have an account?
             </Anchor>
           </Center>
