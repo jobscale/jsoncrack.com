@@ -1,38 +1,48 @@
 import React from "react";
-import Head from "next/head";
-import { generateJsonld } from "src/constants/jsonld";
-import { metaDescription } from "src/constants/landing";
-import { FAQ } from "src/containers/Landing/FAQ";
-import { Features } from "src/containers/Landing/Features";
-import { HeroPreview } from "src/containers/Landing/HeroPreview";
-import { HeroSection } from "src/containers/Landing/HeroSection";
-import { PremiumVsFree } from "src/containers/Landing/PremiumVsFree";
-import { Pricing } from "src/containers/Landing/Pricing";
-import Layout from "src/layout/Layout";
+import type { InferGetStaticPropsType, GetStaticProps } from "next";
+import { NextSeo } from "next-seo";
+import { SEO } from "../constants/seo";
+import { FAQ } from "../layout/Landing/FAQ";
+import { Features } from "../layout/Landing/Features";
+import { HeroPreview } from "../layout/Landing/HeroPreview";
+import { HeroSection } from "../layout/Landing/HeroSection";
+import { Section1 } from "../layout/Landing/Section1";
+import { Section2 } from "../layout/Landing/Section2";
+import { Section3 } from "../layout/Landing/Section3";
+import Layout from "../layout/PageLayout";
 
-export const HomePage = () => {
+export const HomePage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   return (
     <Layout>
-      <Head>
-        <title>JSON Crack | Transform your data into interactive graphs</title>
-        <meta name="description" content={metaDescription} key="description" />
-        <meta property="og:description" content={metaDescription} key="ogdescription" />
-        <meta name="twitter:description" content={metaDescription} key="twdescription" />
-        <link rel="canonical" href="https://jsoncrack.com" />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={generateJsonld()}
-          key="product-jsonld"
-        />
-      </Head>
-      <HeroSection />
+      <NextSeo {...SEO} canonical="https://jsoncrack.com" />
+      <HeroSection stars={props.stars} />
       <HeroPreview />
+      <Section1 />
+      <Section2 />
+      <Section3 />
       <Features />
-      <PremiumVsFree />
-      <Pricing />
       <FAQ />
     </Layout>
   );
 };
 
 export default HomePage;
+
+export const getStaticProps = (async () => {
+  try {
+    const res = await fetch("https://api.github.com/repos/AykutSarac/jsoncrack.com");
+    const data = await res.json();
+
+    return {
+      props: {
+        stars: data?.stargazers_count || 0,
+      },
+    };
+  } catch (error) {
+    return {
+      props: {
+        stars: 0,
+      },
+    };
+  }
+}) satisfies GetStaticProps<{ stars: number }>;

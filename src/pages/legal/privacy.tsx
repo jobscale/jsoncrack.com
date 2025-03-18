@@ -1,23 +1,26 @@
 import React from "react";
-import Head from "next/head";
 import { Box, Container, Paper, Stack, Text, Title } from "@mantine/core";
-import Layout from "src/layout/Layout";
-import privacy from "../../constants/privacy.json";
+import { NextSeo } from "next-seo";
+import { SEO } from "../../constants/seo";
+import privacy from "../../data/privacy.json";
+import Layout from "../../layout/PageLayout";
 
 const Privacy = () => {
   return (
     <Layout>
-      <Head>
-        <title>Privacy Policy - JSON Crack</title>
-        <link rel="canonical" href="https://jsoncrack.com/legal/privacy" />
-      </Head>
+      <NextSeo
+        {...SEO}
+        title="Privacy Policy - JSON Crack"
+        description="JSON Crack Privacy Policy"
+        canonical="https://jsoncrack.com/legal/privacy"
+      />
       <Container my={50} size="md" pb="lg">
         <Paper bg="transparent">
           <Title ta="center" c="gray.8">
             Privacy Policy
           </Title>
           <Text c="gray.6" ta="center">
-            Last updated: May 21, 2024
+            Last updated: Feb 5, 2025
           </Text>
 
           <Stack mt={50} my="lg">

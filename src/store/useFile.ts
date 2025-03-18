@@ -1,14 +1,49 @@
 import debounce from "lodash.debounce";
+import { event as gaEvent } from "nextjs-google-analytics";
 import { toast } from "react-hot-toast";
 import { create } from "zustand";
-import { defaultJson } from "src/constants/data";
-import { FileFormat } from "src/enums/file.enum";
-import { contentToJson, jsonToContent } from "src/lib/utils/jsonAdapter";
-import { isIframe } from "src/lib/utils/widget";
-import { documentSvc } from "src/services/document.service";
-import useGraph from "../modules/GraphView/stores/useGraph";
+import { FileFormat } from "../enums/file.enum";
+import useGraph from "../features/editor/views/GraphView/stores/useGraph";
+import { isIframe } from "../lib/utils/helpers";
+import { contentToJson, jsonToContent } from "../lib/utils/jsonAdapter";
 import useConfig from "./useConfig";
 import useJson from "./useJson";
+
+const defaultJson = JSON.stringify(
+  {
+    fruits: [
+      {
+        name: "Apple",
+        color: "Red",
+        nutrients: {
+          calories: 52,
+          fiber: "2.4g",
+          vitaminC: "4.6mg",
+        },
+      },
+      {
+        name: "Banana",
+        color: "Yellow",
+        nutrients: {
+          calories: 89,
+          fiber: "2.6g",
+          potassium: "358mg",
+        },
+      },
+      {
+        name: "Orange",
+        color: "Orange",
+        nutrients: {
+          calories: 47,
+          fiber: "2.4g",
+          vitaminC: "53.2mg",
+        },
+      },
+    ],
+  },
+  null,
+  2
+);
 
 type SetContents = {
   contents?: string;
@@ -26,7 +61,6 @@ interface JsonActions {
   setError: (error: string | null) => void;
   setHasChanges: (hasChanges: boolean) => void;
   setContents: (data: SetContents) => void;
-  fetchFile: (fileId: string) => void;
   fetchUrl: (url: string) => void;
   setFormat: (format: FileFormat) => void;
   clear: () => void;
@@ -79,6 +113,7 @@ const useFile = create<FileStates & JsonActions>()((set, get) => ({
   setFile: fileData => {
     set({ fileData, format: fileData.format || FileFormat.JSON });
     get().setContents({ contents: fileData.content, hasChanges: false });
+    gaEvent("set_content", { label: fileData.format });
   },
   getContents: () => get().contents,
   getFormat: () => get().format,
@@ -141,9 +176,8 @@ const useFile = create<FileStates & JsonActions>()((set, get) => ({
     }
   },
   checkEditorSession: (url, widget) => {
-    if (url && typeof url === "string") {
-      if (isURL(url)) return get().fetchUrl(url);
-      return get().fetchFile(url);
+    if (url && typeof url === "string" && isURL(url)) {
+      return get().fetchUrl(url);
     }
 
     let contents = defaultJson;
@@ -153,18 +187,6 @@ const useFile = create<FileStates & JsonActions>()((set, get) => ({
 
     if (format) set({ format });
     get().setContents({ contents, hasChanges: false });
-  },
-  fetchFile: async id => {
-    try {
-      const { data, error } = await documentSvc.getById(id);
-      if (error) throw error;
-
-      if (data?.length) get().setFile(data[0]);
-      if (data?.length === 0) throw new Error("Document not found");
-    } catch (error: any) {
-      if (error?.message) toast.error(error?.message);
-      get().setContents({ contents: defaultJson, hasChanges: false });
-    }
   },
 }));
 

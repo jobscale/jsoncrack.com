@@ -1,45 +1,20 @@
-import { create } from "zustand";
-import type { Modal } from "src/containers/Modals";
-import useUser from "./useUser";
-
-type ModalState = {
-  [key in Modal]: boolean;
-};
+import { createWithEqualityFn as create } from "zustand/traditional";
+import { type ModalName, modals } from "../features/modals/modalTypes";
 
 interface ModalActions {
-  setVisible: (modal: Modal) => (visible: boolean) => void;
+  setVisible: (name: ModalName, open: boolean) => void;
 }
 
-const initialStates: ModalState = {
-  cloud: false,
-  download: false,
-  import: false,
-  account: false,
-  node: false,
-  share: false,
-  login: false,
-  upgrade: false,
-  jwt: false,
-  schema: false,
-  review: false,
-  jq: false,
-  type: false,
-  jpath: false,
-};
+type ModalState = Record<ModalName, boolean>;
 
-const authModals: Modal[] = ["cloud", "account"];
+const initialStates: ModalState = modals.reduce((acc, modal) => {
+  acc[modal] = false;
+  return acc;
+}, {} as ModalState);
 
-const useModal = create<ModalState & ModalActions>()(set => ({
+export const useModal = create<ModalState & ModalActions>()(set => ({
   ...initialStates,
-  setVisible: modal => visible => {
-    const user = useUser.getState();
-
-    if (authModals.includes(modal) && !user.isAuthenticated) {
-      return set({ login: true });
-    }
-
-    set({ [modal]: visible });
+  setVisible: (name, open) => {
+    set({ [name]: open });
   },
 }));
-
-export default useModal;

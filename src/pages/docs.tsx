@@ -1,9 +1,10 @@
 import React from "react";
-import Head from "next/head";
 import { Group, Paper, Stack, Text, Title } from "@mantine/core";
 import { CodeHighlight } from "@mantine/code-highlight";
 import styled from "styled-components";
-import Layout from "src/layout/Layout";
+import { NextSeo } from "next-seo";
+import { SEO } from "../constants/seo";
+import Layout from "../layout/PageLayout";
 
 const StyledFrame = styled.iframe`
   border: none;
@@ -37,11 +38,12 @@ const StyledHighlight = styled.span<{ $link?: boolean; $alert?: boolean }>`
 const Docs = () => {
   return (
     <Layout>
-      <Head>
-        <title>Embed - JSON Crack</title>
-        <meta name="description" content="Integrate JSON Crack widgets into your website." />
-        <link rel="canonical" href="https://jsoncrack.com/docs" />
-      </Head>
+      <NextSeo
+        {...SEO}
+        title="Documentation - JSON Crack"
+        description="Integrate JSON Crack widgets into your website."
+        canonical="https://jsoncrack.com/docs"
+      />
       <Stack mx="auto" maw="90%">
         <Group mb="lg" mt={40}>
           <Title order={1} c="dark">
@@ -73,27 +75,6 @@ const Docs = () => {
               loading="eager"
             >
               See the Pen <a href="https://codepen.io/AykutSarac/pen/KKBpWVR">Untitled</a> by Aykut
-              Saraç (<a href="https://codepen.io/AykutSarac">@AykutSarac</a>) on{" "}
-              <a href="https://codepen.io">CodePen</a>.
-            </StyledFrame>
-          </StyledContentBody>
-        </Paper>
-        <Paper bg="white" c="black" p="md" radius="md" withBorder>
-          <Title mb="sm" order={3} c="dark">
-            # Embed Saved JSON
-          </Title>
-          <StyledContentBody>
-            <Text>
-              Just like fetching from URL above, you can embed saved public json by adding the json
-              id to &quot;json&quot; query{" "}
-              <StyledHighlight>?json=639b65c5a82efc29a24b2de2</StyledHighlight>
-            </Text>
-            <StyledFrame
-              title="Untitled"
-              src="https://codepen.io/AykutSarac/embed/vYaORgM?default-tab=html%2Cresult"
-              loading="lazy"
-            >
-              See the Pen <a href="https://codepen.io/AykutSarac/pen/vYaORgM">Untitled</a> by Aykut
               Saraç (<a href="https://codepen.io/AykutSarac">@AykutSarac</a>) on{" "}
               <a href="https://codepen.io">CodePen</a>.
             </StyledFrame>

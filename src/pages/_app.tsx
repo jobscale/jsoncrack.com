@@ -1,17 +1,17 @@
 import React from "react";
 import type { AppProps } from "next/app";
-import Head from "next/head";
 import { useRouter } from "next/router";
 import { createTheme, MantineProvider } from "@mantine/core";
 import "@mantine/core/styles.css";
 import "@mantine/code-highlight/styles.css";
 import { ThemeProvider } from "styled-components";
-import ReactGA from "react-ga4";
+import { NextSeo, SoftwareAppJsonLd } from "next-seo";
+import { GoogleAnalytics } from "nextjs-google-analytics";
 import { Toaster } from "react-hot-toast";
-import GlobalStyle from "src/constants/globalStyle";
-import { lightTheme } from "src/constants/theme";
-import { supabase } from "src/lib/api/supabase";
-import useUser from "src/store/useUser";
+import GlobalStyle from "../constants/globalStyle";
+import { SEO } from "../constants/seo";
+import { lightTheme } from "../constants/theme";
+import { smartColorSchemeManager } from "../lib/utils/mantineColorScheme";
 
 const theme = createTheme({
   autoContrast: true,
@@ -52,39 +52,36 @@ const theme = createTheme({
   },
 });
 
-const isDevelopment = process.env.NODE_ENV === "development";
-const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_ID as string;
-
-ReactGA.initialize(GA_TRACKING_ID, { testMode: isDevelopment });
+const IS_PROD = process.env.NODE_ENV === "production";
 
 function JsonCrack({ Component, pageProps }: AppProps) {
-  const router = useRouter();
-  const setSession = useUser(state => state.setSession);
+  const { pathname } = useRouter();
 
-  React.useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) setSession(session);
-    });
-  }, [setSession]);
-
-  React.useEffect(() => {
-    const handleRouteChange = (page: string) => {
-      ReactGA.send({ hitType: "pageview", page });
-    };
-
-    router.events.on("routeChangeComplete", handleRouteChange);
-
-    return () => {
-      router.events.off("routeChangeComplete", handleRouteChange);
-    };
-  }, [router.events]);
+  // Create a single smart manager that handles pathname logic internally
+  const colorSchemeManager = smartColorSchemeManager({
+    key: "editor-color-scheme",
+    getPathname: () => pathname,
+    dynamicPaths: ["/editor"], // Only editor paths use dynamic theme
+  });
 
   return (
     <>
-      <Head>
-        <title>JSON Crack | Transform your data into interactive graphs</title>
-      </Head>
-      <MantineProvider defaultColorScheme="light" theme={theme}>
+      <NextSeo {...SEO} />
+      <SoftwareAppJsonLd
+        name="JSON Crack"
+        price="0"
+        priceCurrency="USD"
+        type="SoftwareApplication"
+        operatingSystem="Browser"
+        keywords="json, json viewer, json visualizer, json formatter, json editor, json parser, json to tree view, json to diagram, json graph, json beautifier, json validator, json to csv, json to yaml, json minifier, json schema, json data transformer, json api, online json viewer, online json formatter, online json editor, json tool"
+        applicationCategory="DeveloperApplication"
+        aggregateRating={{ ratingValue: "4.9", ratingCount: "19" }}
+      />
+      <MantineProvider
+        colorSchemeManager={colorSchemeManager}
+        defaultColorScheme="light"
+        theme={theme}
+      >
         <ThemeProvider theme={lightTheme}>
           <Toaster
             position="bottom-right"
@@ -102,6 +99,7 @@ function JsonCrack({ Component, pageProps }: AppProps) {
             }}
           />
           <GlobalStyle />
+          {IS_PROD && <GoogleAnalytics trackPageViews />}
           <Component {...pageProps} />
         </ThemeProvider>
       </MantineProvider>
