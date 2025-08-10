@@ -1,7 +1,7 @@
 import { NODE_DIMENSIONS } from "../../../../../../constants/graph";
 import useConfig from "../../../../../../store/useConfig";
 
-type Text = string | [string, string][];
+type Text = number | string | [string, string][];
 type Size = { width: number; height: number };
 
 export const isContentImage = (value: Text) => {
@@ -14,11 +14,11 @@ export const isContentImage = (value: Text) => {
 };
 
 const calculateLines = (text: Text): string => {
-  if (typeof text === "string") {
-    return text;
-  } else {
+  if (Array.isArray(text)) {
     return text.map(([k, v]) => `${k}: ${JSON.stringify(v).slice(0, 80)}`).join("\n");
   }
+
+  return `${text}`;
 };
 
 const calculateWidthAndHeight = (str: string, single = false) => {
@@ -26,7 +26,7 @@ const calculateWidthAndHeight = (str: string, single = false) => {
 
   const dummyElement = document.createElement("div");
   dummyElement.style.whiteSpace = single ? "nowrap" : "pre-wrap";
-  dummyElement.innerHTML = str;
+  dummyElement.innerText = str;
   dummyElement.style.fontSize = "12px";
   dummyElement.style.width = "fit-content";
   dummyElement.style.padding = "0 10px";
